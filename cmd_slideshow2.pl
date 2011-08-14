@@ -63,7 +63,9 @@ sub render {
         { type => SCALAR   },
     ); 
 
-    open my $fh, '>:utf8', "$OUTPUT_DIR/$id.html";
+    my $file = $id == 0 ? 'index' : $id;
+
+    open my $fh, '>:utf8', "$OUTPUT_DIR/$file.html";
     my $string = $TX->render(
         ( $id == 0 ) ? $TITLE_TEMPLATE : $TEMPLATE,
         {
@@ -71,8 +73,6 @@ sub render {
             page   => $id,
             text   => $body,
             header => $header,
-            title  => $header->{title},
-            author => $header->{author},
             page_title => $page_title,
         }
     );
@@ -118,7 +118,7 @@ sub header {
         my $line = shift;
         chomp $line;
 
-        if( $line =~ /^\s*(title|author)\s*:\s*(.+)$/) {
+        if( $line =~ /^\s*(.*?)\s*:\s*([^\n]+)$/) {
             $header{$1} = $2;
         }
 

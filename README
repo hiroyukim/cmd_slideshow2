@@ -1,0 +1,32 @@
+cmd_slideshowの改良版です。
+
+[変更点]
+
+- 標準入力からではなくて　引数としてファイルパスを受け取るようになりました。
+- __NEXT__ではなく、* でページが切り替わるようになりました。
+- ページにタイトルが付くようになりました。
+- 使いづらいのでJSによる動的ページが消えました。 
+- header領域に好きな情報を埋め込めるようになりました。
+
+[TODO]
+
+- SyntaxHighliter採用予定
+-- http://alexgorbatchev.com/SyntaxHighlighter/
+
+
+[SYNOPSIS]
+
+    cmd_slideshow2.pl source.txt
+
+    souce.txt
+
+    ////////////////////////////////
+    __HEADER__
+    title: test
+    author: hogetan
+    __BODY__
+
+    はてな記法で書いてね。
+    
+    ////////////////////////////////
+
