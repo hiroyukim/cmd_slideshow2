@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use utf8;
@@ -41,22 +42,24 @@ sub main {
         dircopy($JS_DIR,dir($OUTPUT_DIR,"js"));
     }
 
-    my $header = header($path);
-    my $body   = body($path);
-    $TOTAL     = @{$body};
+    my $header              = header($path);
+    my ($body,$page_titles) = body($path);
+    $TOTAL                  = @{$body};
 
-    render(0,$header,'');
+    render(0,$header,'','');
 
     my $id = 1;
     for my $row ( @{$body} ) {
-        render($id++, $header,parser(join '', @{$row} ) );
+        render($id, $header,parser(join '', @{$row} ),$page_titles->[$id-1]);
+        $id++;
     }
 }
 
 sub render {
-    my ($id,$header,$body) = validate_pos(@_,
+    my ($id,$header,$body,$page_title) = validate_pos(@_,
         { type => SCALAR   },
         { type => HASHREF  },
+        { type => SCALAR   },
         { type => SCALAR   },
     ); 
 
@@ -70,6 +73,7 @@ sub render {
             header => $header,
             title  => $header->{title},
             author => $header->{author},
+            page_title => $page_title,
         }
     );
     print $fh $string;
@@ -82,6 +86,7 @@ sub body {
     my $pre_fg;
     my $sections = 0;
     my @body;
+    my @page_titles;
     iterator($path => sub {
         my $line = shift;
 
@@ -92,7 +97,8 @@ sub body {
             $pre_fg = 0;
         }
 
-        if( !$pre_fg && $line =~ /^\*([^\*]+)$/ ) {
+        if( !$pre_fg && $line =~ /^\*([^\*\n]+)$/ ) {
+            push @page_titles, $1;
             push @{$body[$sections++]},$line;      
         }
         elsif( defined $sections && @body ) {
@@ -101,7 +107,7 @@ sub body {
 
     });
 
-    return [@body];
+    return [@body],[@page_titles];
 }
 
 sub header {
@@ -125,7 +131,7 @@ sub header {
 sub iterator {
     my ($path,$code) = @_;
 
-    open my $fh, '<:utf8' , $path or $!;
+    open( my $fh, '<:utf8' , $path ) or die $!;
 
     while( my $line = <$fh> ) {
         $code->($line);
