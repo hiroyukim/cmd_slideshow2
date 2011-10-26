@@ -1,5 +1,16 @@
 cmd_slideshowの改良版です。
 
+[install]
+
+for module in File::HomeDir Text::Xatena Path::Class File::Copy::Recursive Text::Xatena::Util Params::Validate Text::Xslate 
+do
+    cpanm $module
+done
+
+cd ~/local
+git clone git://github.com/hiroyukim/cmd_slideshow2.git
+ln -s ~/local/cmd_slideshow2/template ~/.cmd_slideshow2
+
 [変更点]
 
 - 標準入力からではなくて　引数としてファイルパスを受け取るようになりました。
@@ -7,12 +18,9 @@ cmd_slideshowの改良版です。
 - ページにタイトルが付くようになりました。
 - 使いづらいのでJSによる動的ページが消えました。 
 - header領域に好きな情報を埋め込めるようになりました。
-
-[TODO]
-
-- SyntaxHighliter採用予定
+- SyntaxHighliter採用
 -- http://alexgorbatchev.com/SyntaxHighlighter/
-
+- ページ遷移のリンクが右上になりました
 
 [SYNOPSIS]
 
