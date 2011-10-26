@@ -20,16 +20,14 @@ my $TITLE_TEMPLATE    = 'title_template.html';
 my $TEMPLATE          = 'template.html';
 my $TOTAL             = 0;
 
-{    
-    no strict 'refs';
-    no warnings 'redefine';
-    local *{"Text::Xatena::Node::SuperPre\::as_html"} = sub {
-        my ($self, %opts) = @_;
-        sprintf('<pre class="prettyprint">%s</pre>',
-            escape_html(join "", @{ $self->children })
-        );
-    };
-}
+no strict 'refs';
+no warnings 'redefine';
+local *{"Text::Xatena::Node::SuperPre\::as_html"} = sub {
+    my ($self, %opts) = @_;
+    sprintf('<pre class="prettyprint">%s</pre>',
+        escape_html(join "", @{ $self->children })
+    );
+};
 
 sub main {
     my ($path) = validate_pos(@_,
@@ -114,15 +112,18 @@ sub header {
     my $path = shift;
 
     my %header;
+    my $body_tag_fg = 0;
     iterator($path => sub {
         my $line = shift;
         chomp $line;
 
-        if( $line =~ /^\s*(.*?)\s*:\s*([^\n]+)$/) {
+        if( !$body_tag_fg && $line =~ /^\s*(.*?)\s*:\s*([^\n]+)$/) {
             $header{$1} = $2;
         }
 
-        return if $line =~ /^__BODY__$/ ; 
+        if( $line =~ /^__BODY__$/ ) {
+            $body_tag_fg = 1;
+        }
     });
 
     return \%header; 
