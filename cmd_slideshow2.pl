@@ -37,7 +37,7 @@ sub main {
     unless( -e $OUTPUT_DIR ) {
         mkdir $OUTPUT_DIR;
         local $File::Copy::Recursive::CopyLink = 0;
-        dircopy($JS_DIR,dir($OUTPUT_DIR,"js"));
+        dircopy($JS_DIR,dir($OUTPUT_DIR,$_)) for qw/js css/;
     }
 
     my $header              = header($path);
